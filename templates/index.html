@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tirada de Tarot</title>
+</head>
+<body>
+    <h1>Tirada de Tarot</h1>
+    <label for="cantidad">¿Cuántas cartas quieres sacar?</label>
+    <input type="number" id="cantidad" min="1" max="10" value="5">
+    <button id="tirar">Echar cartas</button>
+    <div id="cartas"></div>
+    <script>
+        document.getElementById('tirar').onclick = async function() {
+            const cantidad = document.getElementById('cantidad').value;
+            const res = await fetch(`/cartas?cantidad=${cantidad}`);
+            const cartas = await res.json();
+            const contenedor = document.getElementById('cartas');
+            contenedor.innerHTML = '';
+            cartas.forEach(carta => {
+                contenedor.innerHTML += `
+                    <div style="border:1px solid #ccc; margin:10px; padding:10px;">
+                        <h2>${carta.name || carta.carta}</h2>
+                        <p><strong>Significado (al derecho):</strong> ${carta.meaning_up || carta.significado}</p>
+                        <p><strong>Significado (invertido):</strong> ${carta.meaning_rev || ''}</p>
+                        <p><strong>Descripción:</strong> ${carta.desc || ''}</p>
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
