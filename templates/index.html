@@ -1,33 +1,51 @@
+<!--
+    Plantilla principal para la tirada de cartas de Tarot.
+    - Muestra un formulario para seleccionar la cantidad de cartas a sacar.
+    - Al enviar el formulario (POST), muestra las cartas seleccionadas con sus atributos.
+    - Utiliza variables pasadas desde Flask: 'cartas' (lista de cartas) y 'cantidad' (número seleccionado).
+    - Cada carta muestra nombre, significado al derecho, significado invertido y descripción.
+    - Incluye enlace al repositorio de GitHub en el pie de página.
+-->
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Tirada de Tarot</title>
+    <!-- Enlace a la hoja de estilos estática -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>Tirada de Tarot</h1>
-    <label for="cantidad">¿Cuántas cartas quieres sacar?</label>
-    <input type="number" id="cantidad" min="1" max="10" value="5">
-    <button id="tirar">Echar cartas</button>
-    <div id="cartas"></div>
-    <script>
-        document.getElementById('tirar').onclick = async function() {
-            const cantidad = document.getElementById('cantidad').value;
-            const res = await fetch(`/cartas?cantidad=${cantidad}`);
-            const cartas = await res.json();
-            const contenedor = document.getElementById('cartas');
-            contenedor.innerHTML = '';
-            cartas.forEach(carta => {
-                contenedor.innerHTML += `
-                    <div style="border:1px solid #ccc; margin:10px; padding:10px;">
-                        <h2>${carta.name || carta.carta}</h2>
-                        <p><strong>Significado (al derecho):</strong> ${carta.meaning_up || carta.significado}</p>
-                        <p><strong>Significado (invertido):</strong> ${carta.meaning_rev || ''}</p>
-                        <p><strong>Descripción:</strong> ${carta.desc || ''}</p>
-                    </div>
-                `;
-            });
-        }
-    </script>
+    <!-- Título principal -->
+    <a><h1>Tirada de Tarot</h1></a>
+    <!-- Formulario para elegir la cantidad de cartas -->
+    <form method="post">
+        <label for="cantidad">¿Cuántas cartas quieres sacar?</label>
+        <input type="number" id="cantidad" name="cantidad" min="1" max="10" value="{{ cantidad }}">
+        <button type="submit">Echar cartas</button>
+    </form>
+    <!-- Sección donde se muestran las cartas seleccionadas -->
+    <div id="cartas">
+        {% for carta in cartas %}
+            <div style="border:1px solid #ccc; margin:10px; padding:10px;">
+                <!-- Nombre de la carta -->
+                <a><h2>{{ carta.name or carta.carta }}</h2></a>
+                <!-- Significado al derecho -->
+                <p><strong>Significado (al derecho):</strong> {{ carta.meaning_up or carta.significado }}</p>
+                <!-- Significado invertido -->
+                <p><strong>Significado (invertido):</strong> {{ carta.meaning_rev or '' }}</p>
+                <!-- Descripción de la carta -->
+                <p><strong>Descripción:</strong> {{ carta.desc or '' }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+    <br>
+    <!-- Pie de página con enlace al repositorio -->
+    <footer>
+        <div id="sidebar">
+            <a href="https://github.com/antonio-corraliza/web_tarot">Enlace a repositorio en GitHub</a>
+        </div>
+    </footer>
 </body>
 </html>
